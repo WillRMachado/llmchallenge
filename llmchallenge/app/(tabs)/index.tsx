@@ -1,40 +1,80 @@
-import { YStack, TextArea, Button, Text } from 'tamagui'
-import { analyzeTextForComponents } from '../../services/openAi'
+import { useState } from 'react'
+import { YStack, TextArea, Button, Text, ScrollView } from 'tamagui'
+import { identifyComponents } from '../../services/api/openaiService'
+import type { Component } from '../../services/api/types'
+import { IdentifiedComponents } from '../../components'
 
 export default function TabOneScreen() {
+  const [inputText, setInputText] = useState('')
+  const [isLoading, setIsLoading] = useState(false)
+  const [identifiedComponents, setIdentifiedComponents] = useState<Component[]>([])
+  const [error, setError] = useState<string | null>(null)
+
   const handlePress = async () => {
+    if (!inputText.trim()) return // Don't proceed if input is empty
+    
+    setIsLoading(true)
+    setError(null)
+    
     try {
-      const components = await analyzeTextForComponents('a red button')
-      console.log('Analysis result:', components)
-      // Here you can handle the response, e.g., update state or show an alert
-      alert(JSON.stringify(components, null, 2))
+      const response = await identifyComponents(inputText)
+      console.log('Analysis result:', response)
+      
+      if (Array.isArray(response)) {
+        setIdentifiedComponents(response)
+      } else {
+        setIdentifiedComponents([])
+      }
     } catch (error) {
       console.error('Error analyzing text:', error)
-      alert('Error analyzing text. Check console for details.')
+      setError('Error analyzing text. Please try again.')
+      setIdentifiedComponents([])
+    } finally {
+      setIsLoading(false)
     }
   }
 
   return (
     <YStack flex={1} bg="$background" p="$4" gap="$4">
-      <TextArea
-        flex={1}
-        maxHeight="50%"
-        placeholder="Type here..."
-        borderWidth={1}
-        borderColor="$borderColor"
-        borderRadius="$4"
-        p="$3"
-        fontSize="$5"
-      />
-      <Button 
-        onPress={handlePress}
-        bg="$red9"
-        color="white"
-        hoverStyle={{ bg: '$red10' }}
-        pressStyle={{ bg: '$red8' }}
-      >
-        <Text color="white" fontWeight="bold">Analyze Text</Text>
-      </Button>
+      <ScrollView flex={1}>
+        <TextArea
+          placeholder="Describe the components you want to identify..."
+          value={inputText}
+          onChangeText={setInputText}
+          style={{
+            minHeight: 150,
+            borderWidth: 1,
+            borderColor: '$gray8',
+            padding: 12,
+            marginBottom: 16,
+          }}
+          editable={!isLoading}
+        />
+        
+        <YStack mb="$4">
+          <Button 
+            onPress={handlePress}
+            bg="$blue9"
+            color="white"
+            hoverStyle={{ bg: '$blue10' }}
+            pressStyle={{ bg: '$blue8' }}
+            disabled={isLoading}
+            opacity={isLoading ? 0.7 : 1}
+          >
+            {isLoading ? 'Analyzing...' : 'Identify Components'}
+          </Button>
+        </YStack>
+
+        {error && (
+          <YStack mb="$4">
+            <Text color="$red10">
+              {error}
+            </Text>
+          </YStack>
+        )}
+
+        <IdentifiedComponents components={identifiedComponents} />
+      </ScrollView>
     </YStack>
   )
 }

@@ -27,6 +27,8 @@ yarn-error.log
 dist
 tsconfig.tsbuildinfo
 node_modules
+**/node_modules
+
 **/_
 **/tests/spec/out
 .DS_Store
@@ -40,7 +42,7 @@ node_modules
 # local env files
 .env.local
 .env.development.local
-.env.test.localp
+.env.test.local
 .env.production.local
 
 .expo
