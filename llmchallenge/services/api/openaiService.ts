@@ -1,5 +1,6 @@
 import { apiClient } from './config';
 import { handleApiError } from './errorUtils';
+import { parseAiIdentifiedComponents } from '../../utils/ai';
 import { 
   ChatMessage, 
   Component,
@@ -136,24 +137,7 @@ export const identifyComponents = async (text: string): Promise<Component[]> => 
     if (!message || !message.function_call || !message.function_call.arguments) {
       throw createApiError('Invalid response format from OpenAI', 500, 'INVALID_RESPONSE');
     }
-
-    try {
-      const { components } = JSON.parse(message.function_call.arguments);
-      if (!Array.isArray(components)) {
-        throw new Error('Expected an array of components');
-      }
-
-      return components.map(component => ({
-        name: component.name,
-        color: component.color || '#000000',
-        text: component.text || '',
-        placeholder: component.placeholder || '',
-        styles: component.styles || {},
-      }));
-    } catch (parseError) {
-      console.error('Failed to parse response:', message);
-      throw createApiError('Failed to parse response', 500, 'PARSE_ERROR');
-    }
+    return parseAiIdentifiedComponents(message.function_call.arguments);
   } catch (error) {
     console.error('Error identifying components:', error);
     throw createApiError('Failed to identify components', 500, 'IDENTIFY_COMPONENTS_ERROR');

@@ -42,8 +42,17 @@ export default function TabOneScreen() {
   };
 
   return (
-    <YStack flex={1} bg="$background" p="$4" gap="$4">
-      <ScrollView flex={1}>
+    <YStack flex={1} bg="$background" p="$4">
+      <ScrollView flex={1} mb="$4">
+        {error && (
+          <YStack mb="$4">
+            <Text color="$red10">{error}</Text>
+          </YStack>
+        )}
+        <IdentifiedComponents components={identifiedComponents} />
+      </ScrollView>
+      
+      <YStack gap="$4" pb="$4">
         <TextArea
           placeholder="Describe the components you want to identify..."
           value={inputText}
@@ -52,33 +61,21 @@ export default function TabOneScreen() {
           borderWidth={1}
           borderColor="$borderColor"
           p="$3"
-          mb="$4"
           editable={!isLoading}
           multiline
         />
-
-        <YStack mb="$4">
-          <Button
-            onPress={handlePress}
-            bg="$blue9"
-            color="white"
-            hoverStyle={{ bg: "$blue10" }}
-            pressStyle={{ bg: "$blue8" }}
-            disabled={isLoading}
-            opacity={isLoading ? 0.7 : 1}
-          >
-            {isLoading ? "Analyzing..." : "Identify Components"}
-          </Button>
-        </YStack>
-
-        {error && (
-          <YStack mb="$4">
-            <Text color="$red10">{error}</Text>
-          </YStack>
-        )}
-
-        <IdentifiedComponents components={identifiedComponents} />
-      </ScrollView>
+        <Button
+          onPress={handlePress}
+          bg="$blue9"
+          color="white"
+          hoverStyle={{ bg: "$blue10" }}
+          pressStyle={{ bg: "$blue8" }}
+          disabled={isLoading}
+          opacity={isLoading ? 0.7 : 1}
+        >
+          {isLoading ? "Analyzing..." : "Identify Components"}
+        </Button>
+      </YStack>
     </YStack>
   );
 }
