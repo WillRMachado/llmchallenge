@@ -1,26 +1,25 @@
-import { Link, Tabs } from 'expo-router'
-import { Button, useTheme } from 'tamagui'
-import { Atom, AudioWaveform } from '@tamagui/lucide-icons'
+import { Stack } from 'expo-router'
+import { useTheme } from 'tamagui'
 
-export default function TabLayout() {
+export default function StackLayout() {
   const theme = useTheme()
 
   return (
-    <Tabs
+    <Stack
       screenOptions={{
-        tabBarActiveTintColor: theme.red10.val,
-        tabBarStyle: {
-          backgroundColor: theme.background.val,
-          borderTopColor: theme.borderColor.val,
-        },
         headerStyle: {
           backgroundColor: theme.background.val,
-          borderBottomColor: theme.borderColor.val,
         },
+        headerShadowVisible: true,
         headerTintColor: theme.color.val,
       }}
     >
-
-    </Tabs>
+      <Stack.Screen
+        name="index"
+        options={{
+          title: 'Home',
+        }}
+      />
+    </Stack>
   )
 }

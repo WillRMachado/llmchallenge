@@ -3,7 +3,7 @@ import axios, { AxiosInstance } from 'axios';
 const OPENAI_API_KEY = process.env.EXPO_PUBLIC_OPENAI_API_KEY;
 
 if (!OPENAI_API_KEY) {
-  console.warn('OPENAI_API_KEY is not set in app.config.js');
+  console.warn('OPENAI_API_KEY is not set in env');
 }
 
 export const createApiClient = (): AxiosInstance => {
@@ -13,7 +13,7 @@ export const createApiClient = (): AxiosInstance => {
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${OPENAI_API_KEY}`,
     },
-    timeout: 30000, // 30 seconds
+    timeout: 30000,
   });
 };
 

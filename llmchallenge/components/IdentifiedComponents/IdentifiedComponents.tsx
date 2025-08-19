@@ -3,7 +3,7 @@ import { View, Text, StyleSheet } from 'react-native';
 import { IdentifiedButton } from './IdentifiedButton';
 import { IdentifiedInput } from './IdentifiedInput';
 import { IdentifiedLabel } from './IdentifiedLabel';
-import type { Component } from '../../services';
+import type { Component } from '../../services/api/types';
 
 const styles = StyleSheet.create({
   container: { marginTop: 16, width: '100%' },
@@ -20,7 +20,6 @@ export const IdentifiedComponents: React.FC<IdentifiedComponentsProps> = ({ comp
   if (!components?.length) {
     return null;
   }
-  console.log({components})
 
 
   const componentsMap = {

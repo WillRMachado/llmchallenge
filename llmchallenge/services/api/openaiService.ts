@@ -1,10 +1,8 @@
 import { apiClient } from './config';
 import { handleApiError } from './errorUtils';
 import { 
-  ChatCompletionRequest, 
   ChatMessage, 
   Component,
-  ComponentType 
 } from './types';
 
 interface ApiError extends Error {
@@ -114,7 +112,6 @@ const getSystemMessage = (): ChatMessage => ({
 
 export const identifyComponents = async (text: string): Promise<Component[]> => {
   try {
-    console.log('Identifying components for text:', text);
     
     const messages: ChatMessage[] = [
       getSystemMessage(),
@@ -132,10 +129,8 @@ export const identifyComponents = async (text: string): Promise<Component[]> => 
       function_call: { name: 'identify_components' }
     };
 
-    console.log('Sending request to OpenAI:', JSON.stringify(request, null, 2));
     const response = await apiClient.post('/chat/completions', request).catch(handleApiError);
     
-    console.log('OpenAI raw response:', JSON.stringify(response.data, null, 2));
     
     const message = response.data.choices[0]?.message;
     if (!message || !message.function_call || !message.function_call.arguments) {
@@ -144,12 +139,10 @@ export const identifyComponents = async (text: string): Promise<Component[]> => 
 
     try {
       const { components } = JSON.parse(message.function_call.arguments);
-      console.log({componentsA: components})
       if (!Array.isArray(components)) {
         throw new Error('Expected an array of components');
       }
 
-      // Ensure all components have required fields
       return components.map(component => ({
         name: component.name,
         color: component.color || '#000000',

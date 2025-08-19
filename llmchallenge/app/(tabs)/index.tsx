@@ -20,7 +20,6 @@ export default function TabOneScreen() {
 
     try {
       const response = await identifyComponents(inputText);
-      console.log("Analysis result:", response);
 
       if (Array.isArray(response)) {
         setIdentifiedComponents(response);
@@ -34,7 +33,6 @@ export default function TabOneScreen() {
         setIdentifiedComponents([]);
       }
     } catch (error) {
-      console.error("Error analyzing text:", error);
       setError("Error analyzing text. Please try again.");
       setIdentifiedComponents([]);
     } finally {
