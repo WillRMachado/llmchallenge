@@ -31,6 +31,7 @@ export default function TabOneScreen() {
         }
       } else {
         setIdentifiedComponents([]);
+        setError("an error happened on text parsers, please try again or adjust your input");
       }
     } catch (error) {
       setError("Error analyzing text. Please try again.");
