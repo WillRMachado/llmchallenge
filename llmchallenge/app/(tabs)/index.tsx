@@ -1,38 +1,46 @@
-import { useState } from 'react'
-import { YStack, TextArea, Button, Text, ScrollView } from 'tamagui'
-import { identifyComponents } from '../../services/api/openaiService'
-import type { Component } from '../../services/api/types'
-import { IdentifiedComponents } from '../../components'
+import { useState } from "react";
+import { YStack, TextArea, Button, Text, ScrollView } from "tamagui";
+import { identifyComponents } from "../../services/api/openaiService";
+import type { Component } from "../../services/api/types";
+import { IdentifiedComponents } from "../../components";
 
 export default function TabOneScreen() {
-  const [inputText, setInputText] = useState('')
-  const [isLoading, setIsLoading] = useState(false)
-  const [identifiedComponents, setIdentifiedComponents] = useState<Component[]>([])
-  const [error, setError] = useState<string | null>(null)
+  const [inputText, setInputText] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [identifiedComponents, setIdentifiedComponents] = useState<Component[]>(
+    []
+  );
+  const [error, setError] = useState<string | null>(null);
 
   const handlePress = async () => {
-    if (!inputText.trim()) return // Don't proceed if input is empty
-    
-    setIsLoading(true)
-    setError(null)
-    
+    if (!inputText.trim()) return;
+
+    setIsLoading(true);
+    setError(null);
+
     try {
-      const response = await identifyComponents(inputText)
-      console.log('Analysis result:', response)
-      
+      const response = await identifyComponents(inputText);
+      console.log("Analysis result:", response);
+
       if (Array.isArray(response)) {
-        setIdentifiedComponents(response)
+        setIdentifiedComponents(response);
+
+        if (response.length === 0) {
+          setError(
+            "No components found. Please try again with more specific text."
+          );
+        }
       } else {
-        setIdentifiedComponents([])
+        setIdentifiedComponents([]);
       }
     } catch (error) {
-      console.error('Error analyzing text:', error)
-      setError('Error analyzing text. Please try again.')
-      setIdentifiedComponents([])
+      console.error("Error analyzing text:", error);
+      setError("Error analyzing text. Please try again.");
+      setIdentifiedComponents([]);
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }
+  };
 
   return (
     <YStack flex={1} bg="$background" p="$4" gap="$4">
@@ -41,40 +49,37 @@ export default function TabOneScreen() {
           placeholder="Describe the components you want to identify..."
           value={inputText}
           onChangeText={setInputText}
-          style={{
-            minHeight: 150,
-            borderWidth: 1,
-            borderColor: '$gray8',
-            padding: 12,
-            marginBottom: 16,
-          }}
+          height={150}
+          borderWidth={1}
+          borderColor="$borderColor"
+          p="$3"
+          mb="$4"
           editable={!isLoading}
+          multiline
         />
-        
+
         <YStack mb="$4">
-          <Button 
+          <Button
             onPress={handlePress}
             bg="$blue9"
             color="white"
-            hoverStyle={{ bg: '$blue10' }}
-            pressStyle={{ bg: '$blue8' }}
+            hoverStyle={{ bg: "$blue10" }}
+            pressStyle={{ bg: "$blue8" }}
             disabled={isLoading}
             opacity={isLoading ? 0.7 : 1}
           >
-            {isLoading ? 'Analyzing...' : 'Identify Components'}
+            {isLoading ? "Analyzing..." : "Identify Components"}
           </Button>
         </YStack>
 
         {error && (
           <YStack mb="$4">
-            <Text color="$red10">
-              {error}
-            </Text>
+            <Text color="$red10">{error}</Text>
           </YStack>
         )}
 
         <IdentifiedComponents components={identifiedComponents} />
       </ScrollView>
     </YStack>
-  )
+  );
 }
